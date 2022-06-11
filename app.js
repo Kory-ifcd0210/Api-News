@@ -1,9 +1,23 @@
 const express = require('express')
+const zlib = require("zlib");
+const requestLibrary = require("request");
+
+const options = {
+  hostname: 'news.ycombinator.com/',
+  method: 'GET',
+};
 const app = express()
 
-app.get('/', (request, response)=> {
-    response.send('<h1>Hello World</h1>')
- //dirigir a https://news.ycombinator.com/ con 1 sóla página
+app.get('/', async (request, response)=> {
+    await requestLibrary(
+        { method: 'GET'
+        , uri: 'https://news.ycombinator.com/newest'
+        , gzip: true
+        }
+        , function (error, responseNews, body) {
+            response.send(body);
+        }
+    )
 })
 
 app.get('/num', (request, response) => {
