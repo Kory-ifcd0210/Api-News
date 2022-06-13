@@ -1,9 +1,10 @@
-// const express = require('express')
-// const zlib = require("zlib");
-// const requestLibrary = require("request");
+const express = require('express');
+const app = express();
+
 const puppeteer = require('puppeteer');
 
-(async () => {
+
+const getTabla = async () => {
     try {
         const navegador = await puppeteer.launch()
         const pagina = await navegador.newPage()
@@ -18,16 +19,29 @@ const puppeteer = require('puppeteer');
                 ...document.querySelectorAll('.subtext')
             ].map((nodoDetails) => nodoDetails.innerText);
 
-            return news.map((title, i) => ({title: title, details: details[i] }))
+            return  news.map((title, i) => ({title: title, details: details[i] }))
         })
-
+        // await navegador.close()
         console.log(tabla)
-        await navegador.close()
+        return tabla;
 
     }catch (e){
         console.log(e);
     }
-})()
+
+    // console.log(tabla)
+}
+
+
+
+app.get('/', (request, response) => {
+    response.send('<p>Hola</p>')
+})
+
+app.get('/tabla', async (request, response) => {
+     var tablaOut = await getTabla();
+    response.json(tablaOut)
+})
 
 // const options = {
 //   hostname: 'news.ycombinator.com/',
@@ -53,15 +67,8 @@ const puppeteer = require('puppeteer');
 // // })
 
 
-// const PORT = 3001
-// app.listen(PORT, () =>{
-//     console.log(`Server running on port ${PORT}`)
-// })
+const PORT = 3001
+app.listen(PORT, () =>{
+    console.log(`Server running on port ${PORT}`)
+})
 
-
-
-// const fetch = require("node-fetch");
-
-// fetch("https://news.ycombinator.com/")
-// //.then(promesaFetch => promesaFetch.json())
-// .then(contenido => console.log(contenido))
